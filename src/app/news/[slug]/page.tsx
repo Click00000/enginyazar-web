@@ -23,19 +23,6 @@ interface Article {
   }
 }
 
-const splitTextIntoChunks = (text: string) => {
-  const MAX_CHUNK_SIZE = 500
-  return text.match(/.{1,500}/g) || []
-}
-
-const translateChunks = async (chunks: string[]) => {
-  return Promise.all(chunks.map(chunk => translateText(chunk)))
-}
-
-const mergeTranslatedChunks = (translatedChunks: string[]) => {
-  return translatedChunks.join('')
-}
-
 export async function generateMetadata(props: PageProps): Promise<Metadata> {
   const params = await props.params
   const article = await getNewsDetail(params.slug)
@@ -78,17 +65,17 @@ async function getNewsDetail(slug: string): Promise<Article | null> {
     const article = response.data.Data.find((item: any) => item.id.toString() === newsId)
     if (!article) return null
 
-    // Metni önce cümlelere ayır
+    
     const sentences = article.body.match(/[^.!?]+[.!?]+/g) || []
     
-    // Her cümleyi çevir
+   
     const translatedSentences = await Promise.all(
       sentences.map((sentence: string) => translateText(sentence.trim()))
     )
     
     
-    // Çevrilen cümleleri paragraflar halinde grupla
-    const paragraphSize = 3 // Her paragrafta 3 cümle olsun
+    
+    const paragraphSize = 3 
     const contentParagraphs = []
     
     for (let i = 0; i < translatedSentences.length; i += paragraphSize) {
