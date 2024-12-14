@@ -22,9 +22,9 @@ export default function NewsletterForm() {
       } else {
         setStatus('error')
       }
-    } catch (error) {
+    } catch (error: unknown) {
       setStatus('error')
-    }
+    }    
   }
 
   return (

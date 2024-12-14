@@ -17,12 +17,12 @@ export async function getMarketData() {
         const data = JSON.parse(event.data)
         if (Array.isArray(data)) {
           const btcData = data.find(item => item.s === 'BTCUSDT')
-          const totalMarketCap = calculateTotalMarketCap(btcData)
+          const totalMarketCap = Number(btcData.c) * Number(btcData.v)
           
           resolve({
-            totalMarketCap: `$${(totalMarketCap / 1e12).toFixed(2)}T`,
+            totalMarketCap: `${(totalMarketCap / 1e12).toFixed(2)}T`,
             btcDominance: "52.4%",
-            volume24h: `$${(Number(btcData.v) * Number(btcData.c) / 1e9).toFixed(2)}B`,
+            volume24h: `${(Number(btcData.v) * Number(btcData.c) / 1e9).toFixed(2)}B`,
             fearGreedIndex: {
               value: 72,
               status: "Greed"
@@ -31,8 +31,7 @@ export async function getMarketData() {
           
           ws.close()
         }
-      }
-    })
+      }    })
   } catch (error) {
     console.error('Error fetching market data:', error)
     return null
