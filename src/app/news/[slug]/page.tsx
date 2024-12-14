@@ -26,7 +26,6 @@ interface Article {
 export async function generateMetadata(props: PageProps): Promise<Metadata> {
   const params = await props.params
   const article = await getNewsDetail(params.slug)
-  
   if (!article) {
     return {
       title: 'Haber Bulunamadı',
@@ -65,19 +64,12 @@ async function getNewsDetail(slug: string): Promise<Article | null> {
     const article = response.data.Data.find((item: any) => item.id.toString() === newsId)
     if (!article) return null
 
-    
     const sentences = article.body.match(/[^.!?]+[.!?]+/g) || []
-    
-   
     const translatedSentences = await Promise.all(
       sentences.map((sentence: string) => translateText(sentence.trim()))
     )
-    
-    
-    
-    const paragraphSize = 3 
+    const paragraphSize = 3
     const contentParagraphs = []
-    
     for (let i = 0; i < translatedSentences.length; i += paragraphSize) {
       const paragraph = translatedSentences
         .slice(i, i + paragraphSize)
@@ -105,7 +97,6 @@ async function getNewsDetail(slug: string): Promise<Article | null> {
     return null
   }
 }
-
 
 export default async function NewsDetail(props: PageProps) {
   const params = await props.params
@@ -183,9 +174,9 @@ export default async function NewsDetail(props: PageProps) {
                   />
                   <span className="font-medium">{article.sourceInfo.name}</span>
                 </div>
-                <a 
-                  href={article.url} 
-                  target="_blank" 
+                <a
+                  href={article.url}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-500 hover:text-blue-600"
                 >

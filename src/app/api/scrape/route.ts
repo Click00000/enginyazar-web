@@ -21,7 +21,7 @@ export async function GET() {
         'Authorization': `Apikey ${API_KEY}`
       }
     })
-    
+
     const articles = await Promise.all(response.data.Data.map(async (item: any) => ({
       title: await translateText(item.title),
       image: item.imageurl,
@@ -41,7 +41,7 @@ export async function GET() {
     return NextResponse.json({ articles })
   } catch (error) {
     console.error('Haber çekme hatası:', error)
-    return NextResponse.json({ 
+    return NextResponse.json({
       articles: [],
       error: 'Haberler yüklenirken bir hata oluştu'
     }, { status: 500 })

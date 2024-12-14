@@ -1,58 +1,64 @@
-'use client'
 import { useState } from 'react'
+
+interface FormData {
+  email: string
+}
 
 export default function NewsletterForm() {
   const [email, setEmail] = useState('')
-  const [status, setStatus] = useState('')
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setStatus('subscribing')
-    
+    setStatus('loading')
+
     try {
       const response = await fetch('/api/newsletter', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
       })
-      
+
       if (response.ok) {
         setStatus('success')
         setEmail('')
       } else {
         setStatus('error')
       }
-    } catch (error: unknown) {
+    } catch {
       setStatus('error')
-    }    
+    }
   }
 
   return (
-    <div className="w-full max-w-md">
-      <h3 className="text-lg font-semibold mb-2">Güncel Haberler İçin Abone Olun</h3>
-      <form onSubmit={handleSubmit} className="flex gap-2">
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto">
+      <div className="flex gap-2">
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email adresiniz"
-          className="flex-1 px-4 py-2 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="E-posta adresiniz"
+          className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
         />
-        <button 
+        <button
           type="submit"
-          disabled={status === 'subscribing'}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50"
+          disabled={status === 'loading'}
+          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
         >
-          {status === 'subscribing' ? 'Gönderiliyor...' : 'Abone Ol'}
+          {status === 'loading' ? 'Gönderiliyor...' : 'Abone Ol'}
         </button>
-      </form>
+      </div>
+      
       {status === 'success' && (
-        <p className="text-green-400 mt-2">Başarıyla abone oldunuz!</p>
+        <p className="mt-2 text-green-600">Başarıyla abone oldunuz!</p>
       )}
+      
       {status === 'error' && (
-        <p className="text-red-400 mt-2">Bir hata oluştu, lütfen tekrar deneyin.</p>
+        <p className="mt-2 text-red-600">Bir hata oluştu. Lütfen tekrar deneyin.</p>
       )}
-    </div>
+    </form>
   )
 }
